@@ -40,7 +40,7 @@ namespace ClientUI
                 {
                     case 'P':
                     case 'p':
-                        PlaceOrder placeOrder = new PlaceOrder() { OrderId = Guid.NewGuid().ToString() };
+                        PlaceOrder placeOrder = new PlaceOrder() { OrderId = Guid.NewGuid() };
                         Logger.Info($"sending {placeOrder}");
                         await endpoint.Send(placeOrder).ConfigureAwait(false);
                         break;
@@ -68,9 +68,9 @@ namespace ClientUI
                 {
                     case 'P':
                     case 'p':
-                        PlaceOrder placeOrder = new PlaceOrder() { OrderId = Guid.NewGuid().ToString() };
-                        Logger.Info($"sending {placeOrder}");
-                        await endpoint.SendLocal(placeOrder).ConfigureAwait(false);
+                        PlaceOrder command = new PlaceOrder() { OrderId = Guid.NewGuid() };
+                        Logger.Info($"sending {command}");
+                        await endpoint.SendLocal(command).ConfigureAwait(false);
                         break;
                     case 'Q':
                     case 'q':

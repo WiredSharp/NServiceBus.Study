@@ -31,7 +31,6 @@ namespace Sales
             await endpoint.Stop().ConfigureAwait(false);
         }
 
-
         private async Task DoSomethingLoop(IEndpointInstance endpoint)
         {
             bool stop = false;

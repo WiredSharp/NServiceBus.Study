@@ -3,13 +3,13 @@ using System;
 
 namespace Messages
 {
-    public class PlaceOrder:ICommand
+    public class OrderPlaced: IEvent
     {
         public Guid OrderId { get; set; }
 
         public override string ToString()
         {
-            return $"{nameof(PlaceOrder)} #{OrderId}";
+            return $"{nameof(OrderPlaced)} #{OrderId}";
         }
     }
 }

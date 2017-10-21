@@ -1,10 +1,6 @@
 ﻿using Messages;
 using NServiceBus;
 using NServiceBus.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sales.Handlers
@@ -16,7 +12,7 @@ namespace Sales.Handlers
         public Task Handle(PlaceOrder message, IMessageHandlerContext context)
         {
             Logger.Info($"Received {message}");
-            return Task.CompletedTask;
+            return context.Publish(new OrderPlaced() { OrderId = message.OrderId });
         }
     }
 }
