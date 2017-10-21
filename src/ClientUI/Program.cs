@@ -1,5 +1,6 @@
 ﻿using Messages;
 using NServiceBus;
+using NServiceBus.Helpers;
 using NServiceBus.Logging;
 using System;
 using System.Reflection;
@@ -13,23 +14,49 @@ namespace ClientUI
 
         public static void Main(string[] args)
         {
-            new Program().Run(args).Wait();
-        }
-
-        public async Task Run(string[] args)
-        {
             string name = Assembly.GetExecutingAssembly().GetName().Name;
             Console.Title = name;
-            var endpointConfiguration = new EndpointConfiguration(name);
-            var transport = endpointConfiguration.UseTransport<LearningTransport>();
-            IEndpointInstance endpoint = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
-            await RunLocal(endpoint);
+            new Program().Run(name).Wait();
+        }
+
+        public async Task Run(string name)
+        {
+            IEndpointInstance endpoint = await EndpointFactory.Listen(name);
+            await PlaceOrderLoop(endpoint);
             //Console.WriteLine("Press any key to continue...");
             //Console.ReadKey();
             await endpoint.Stop().ConfigureAwait(false);
         }
 
-        private async Task RunLocal(IEndpointInstance endpoint)
+        private async Task PlaceOrderLoop(IEndpointInstance endpoint)
+        {
+            bool stop = false;
+            do
+            {
+                Console.WriteLine("(P)lace order, (Q)uit?");
+                ConsoleKeyInfo key = Console.ReadKey();
+                Console.WriteLine();
+                switch (key.KeyChar)
+                {
+                    case 'P':
+                    case 'p':
+                        PlaceOrder placeOrder = new PlaceOrder() { OrderId = Guid.NewGuid().ToString() };
+                        Logger.Info($"sending {placeOrder}");
+                        await endpoint.Send(placeOrder).ConfigureAwait(false);
+                        break;
+                    case 'Q':
+                    case 'q':
+                        stop = true;
+                        break;
+                    default:
+                        Console.WriteLine("What?");
+                        break;
+                }
+            }
+            while (!stop);
+        }
+
+        private async Task PlaceLocalOrderLoop(IEndpointInstance endpoint)
         {
             bool stop = false;
             do
